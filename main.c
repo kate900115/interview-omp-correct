@@ -74,6 +74,9 @@ void trainLayer(Layer *l){
         targetOutput = getTargetOutput(lbl);
         
         //displayImage(&img, 6,6);
+    
+    	double maxOut = 0;
+    	int maxInd = 0;
      
         // loop through all output cells for the given image
 	#pragma omp parallel for
@@ -96,11 +99,14 @@ void trainLayer(Layer *l){
 		if (l->cell[i].input[j])
         	l->cell[i].weight[j] += temp;
     	    }
-
-        }
         
-        int predictedNum = getLayerPrediction(l);
-        if (predictedNum!=lbl) errCount++;
+            if (l->cell[i].output > maxOut){
+                maxOut = l->cell[i].output;
+                maxInd = i;
+            }
+        }
+  
+        if (maxInd!=lbl) errCount++;
         
         //printf("\n      Prediction: %d   Actual: %d ",predictedNum, lbl);
 
