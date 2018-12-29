@@ -63,7 +63,7 @@ void trainLayer(Layer *l){
     for (int imgCount=0; imgCount<MNIST_MAX_TRAINING_IMAGES; imgCount++){
         
         // display progress
-        displayLoadingProgressTraining(imgCount,3,5);
+        //displayLoadingProgressTraining(imgCount,3,5);
         
         // Reading next image and corresponding label
         MNIST_Image img = getImage(imageFile);
@@ -91,6 +91,7 @@ void trainLayer(Layer *l){
     	    }
     
     	    l->cell[i].output = c_output/ NUMBER_OF_INPUT_CELLS;             // normalize output (0-1)
+ 
    	    double err = targetOutput.val[i] - l->cell[i].output;
     	    double temp = err * LEARNING_RATE;
     
@@ -108,7 +109,7 @@ void trainLayer(Layer *l){
           
         //printf("\n      Prediction: %d   Actual: %d ",predictedNum, lbl);
 
-        displayProgress(imgCount, errCount, 3, 66);
+        //displayProgress(imgCount, errCount, 3, 66);
         
     }
 
@@ -150,7 +151,7 @@ void testLayer(Layer *l){
     for (int imgCount=0; imgCount<MNIST_MAX_TESTING_IMAGES; imgCount++){
         
         // display progress
-        displayLoadingProgressTesting(imgCount,5,5);
+        //displayLoadingProgressTesting(imgCount,5,5);
         
         // Reading next image and corresponding label
         MNIST_Image img = getImage(imageFile);
@@ -180,7 +181,7 @@ void testLayer(Layer *l){
         
         //printf("\n      Prediction: %d   Actual: %d ",predictedNum, lbl);
         
-        displayProgress(imgCount, errCount, 5, 66);
+        //displayProgress(imgCount, errCount, 5, 66);
         
     }
     
