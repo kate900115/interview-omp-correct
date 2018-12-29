@@ -150,23 +150,19 @@ void updateCellWeights(Cell *c, double err){
 
 void trainCell(Cell *c, MNIST_Image *img, int target){
     
-  
-    for (int i=0; i<NUMBER_OF_INPUT_CELLS; i++){
-        c->input[i] = img->pixel[i] ? 1 : 0;
-    }
-   
     c->output=0;
-    
-    for (int i=0; i<NUMBER_OF_INPUT_CELLS; i++){
-        c->output += c->input[i] * c->weight[i];
+     
+    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
+        c->input[j] = img->pixel[j] ? 1 : 0;
+        c->output += c->input[j] * c->weight[j];
     }
     
     c->output /= NUMBER_OF_INPUT_CELLS;             // normalize output (0-1)
 
     double err = target - c->output;
     
-    for (int i=0; i<NUMBER_OF_INPUT_CELLS; i++){
-        c->weight[i] += LEARNING_RATE * c->input[i] * err;
+    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
+        c->weight[j] += LEARNING_RATE * c->input[j] * err;
     }
 
     //setCellInput(c, img);
