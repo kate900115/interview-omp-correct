@@ -83,7 +83,7 @@ void trainLayer(Layer *l){
         for (int i=0; i < NUMBER_OF_OUTPUT_CELLS; i++){
 	     
     	    double c_output = 0;
-    	    #pragma omp simd 
+    	    #pragma simd 
     	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
         	l->cell[i].input[j] = img.pixel[j] ? 1 : 0;
 		if (l->cell[i].input[j])
@@ -95,7 +95,7 @@ void trainLayer(Layer *l){
    	    double err = targetOutput.val[i] - l->cell[i].output;
     	    double temp = err * LEARNING_RATE;
     
-    	    #pragma omp simd
+    	    #pragma simd
    	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
 		if (l->cell[i].input[j])
         	l->cell[i].weight[j] += temp;
@@ -115,9 +115,9 @@ void trainLayer(Layer *l){
 
     time_t endTrainingTime = time(NULL);
     double trainingTime = difftime(endTrainingTime, startTrainingTime);
-    printf("\n	Training time is %.1f sec\n", trainingTime);
+    printf("Training time is %.1f sec\n", trainingTime);
     double successRate = 100.0- (double)errCount/(double)(MNIST_MAX_TRAINING_IMAGES)*100;
-    printf("\n successful-rate = %lf%%", successRate);
+    printf("training successful-rate = %.2f%%\n", successRate);
 	
     // Close files
     fclose(imageFile);
@@ -169,7 +169,7 @@ void testLayer(Layer *l){
 	#pragma omp parallel for
         for (int i=0; i < NUMBER_OF_OUTPUT_CELLS; i++){
 	    double c_output_test=0;
-    	    #pragma omp simd 
+    	    #pragma simd 
     	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
        	    	l->cell[i].input[j] = img.pixel[j] ? 1 : 0;
 		if (l->cell[i].input[j])
@@ -190,9 +190,9 @@ void testLayer(Layer *l){
     time_t endTestingTime = time(NULL);
     double testingTime = difftime(endTestingTime, startTestingTime);
     double successRate = 100.0- (double)errCount/(double)(MNIST_MAX_TESTING_IMAGES)*100;
-    printf("\n successful-rate = %lf%%", successRate);
+    printf("testing successful-rate = %.2f%%\n", successRate);
 	
-    printf(" \n testing time is: %.1f sec \n\n", testingTime);
+    printf("testing time is: %.1f sec \n", testingTime);
 
     // Close files
     fclose(imageFile);
@@ -230,7 +230,7 @@ int main(int argc, const char * argv[]) {
     // Calculate and print the program's total execution time
     time_t endTime = time(NULL);
     double executionTime = difftime(endTime, startTime);
-    printf("\n    DONE! Total execution time: %.1f sec\n\n",executionTime);
+    printf("DONE! Total execution time: %.1f sec\n",executionTime);
     
     return 0;
 }
