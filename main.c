@@ -76,8 +76,30 @@ void trainLayer(Layer *l){
         //displayImage(&img, 6,6);
      
         // loop through all output cells for the given image
+	#pragma omp parallel for
         for (int i=0; i < NUMBER_OF_OUTPUT_CELLS; i++){
-            trainCell(&l->cell[i], &img, targetOutput.val[i]);
+	     
+    	    double c_output = 0;
+    	    #pragma omp simd 
+    	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
+        	l->cell[i].input[j] = img.pixel[j] ? 1 : 0;
+		if (l->cell[i].input[j])
+        	c_output += l->cell[i].weight[j];
+    	    }
+    
+    	    l->cell[i].output = c_output/ NUMBER_OF_INPUT_CELLS;             // normalize output (0-1)
+   	    double err = targetOutput.val[i] - l->cell[i].output;
+    	    double temp = err * LEARNING_RATE;
+    
+    	    #pragma omp simd
+   	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
+		if (l->cell[i].input[j])
+        	l->cell[i].weight[j] += temp;
+    	    }
+
+
+
+            //trainCell(&l->cell[i], &img, targetOutput.val[i]);
         }
         
         int predictedNum = getLayerPrediction(l);
