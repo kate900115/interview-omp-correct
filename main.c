@@ -55,7 +55,7 @@ void trainLayer(Layer *l){
     //displayImageFrame(5,5);
 
     int errCount = 0;
-
+    int update_errorCount;
     // for test performance
     time_t startTrainingTime = time(NULL); 
     
@@ -105,7 +105,7 @@ void trainLayer(Layer *l){
                 maxInd = i;
             }
         }
-  
+  	#pragma omp critical(update_errCount)
         if (maxInd!=lbl) errCount++;
         
         //printf("\n      Prediction: %d   Actual: %d ",predictedNum, lbl);
@@ -145,6 +145,7 @@ void testLayer(Layer *l){
     //displayImageFrame(7,5);
     
     int errCount = 0;
+    int update_errorCount;
    
     time_t startTestingTime = time(NULL);
  
@@ -163,6 +164,9 @@ void testLayer(Layer *l){
         targetOutput = getTargetOutput(lbl);
         
        // displayImage(&img, 8,6);
+  
+	double maxOut = 0;
+    	int maxInd = 0;
         
         // loop through all output cells for the given image
 	#pragma omp parallel for
@@ -175,10 +179,17 @@ void testLayer(Layer *l){
         	    c_output_test += l->cell[i].weight[j];
     	    }
 	    l->cell[i].output = c_output_test/NUMBER_OF_INPUT_CELLS;   
-        }
-        
-        int predictedNum = getLayerPrediction(l);
-        if (predictedNum!=lbl) errCount++;
+   
+            if (l->cell[i].output > maxOut){
+                maxOut = l->cell[i].output;
+                maxInd = i;
+            }
+    	}
+    
+ 
+       // int predictedNum = getLayerPrediction(l);
+	#pragma omp critical(update_errorCount)
+        if (maxInd!=lbl) errCount++;
         
         //printf("\n      Prediction: %d   Actual: %d ",predictedNum, lbl);
         
