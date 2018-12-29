@@ -150,28 +150,24 @@ void updateCellWeights(Cell *c, double err){
 
 void trainCell(Cell *c, MNIST_Image *img, int target){
     
-    c->output=0;
     double c_output = 0;
     #pragma omp simd 
     for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
         c->input[j] = img->pixel[j] ? 1 : 0;
-        c_output += c->input[j] * c->weight[j];
+	if (c->input[j])
+        c_output += c->weight[j];
     }
     
     c->output = c_output/ NUMBER_OF_INPUT_CELLS;             // normalize output (0-1)
-
     double err = target - c->output;
+    double temp = err * LEARNING_RATE;
+    
     #pragma omp simd
     for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
-        c->weight[j] += LEARNING_RATE * c->input[j] * err;
+	if (c->input[j])
+        c->weight[j] += temp;
     }
 
-    //setCellInput(c, img);
-    //calcCellOutput(c);
-    
-    // learning (by updating the weights)
-    //double err = getCellError(c, target);
-    //updateCellWeights(c, err);
 }
 
 
