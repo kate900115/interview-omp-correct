@@ -151,16 +151,17 @@ void updateCellWeights(Cell *c, double err){
 void trainCell(Cell *c, MNIST_Image *img, int target){
     
     c->output=0;
-     
+    double c_output = 0;
+    #pragma omp simd 
     for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
         c->input[j] = img->pixel[j] ? 1 : 0;
-        c->output += c->input[j] * c->weight[j];
+        c_output += c->input[j] * c->weight[j];
     }
     
-    c->output /= NUMBER_OF_INPUT_CELLS;             // normalize output (0-1)
+    c->output = c_output/ NUMBER_OF_INPUT_CELLS;             // normalize output (0-1)
 
     double err = target - c->output;
-    
+    #pragma omp simd
     for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
         c->weight[j] += LEARNING_RATE * c->input[j] * err;
     }
