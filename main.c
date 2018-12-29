@@ -116,7 +116,9 @@ void trainLayer(Layer *l){
     time_t endTrainingTime = time(NULL);
     double trainingTime = difftime(endTrainingTime, startTrainingTime);
     printf("\n	Training time is %.1f sec\n", trainingTime);
-    
+    double successRate = 100.0- (double)errCount/(double)(MNIST_MAX_TRAINING_IMAGES)*100;
+    printf("\n successful-rate = %lf%%", successRate);
+	
     // Close files
     fclose(imageFile);
     fclose(labelFile);
@@ -182,12 +184,14 @@ void testLayer(Layer *l){
         //printf("\n      Prediction: %d   Actual: %d ",predictedNum, lbl);
         
         //displayProgress(imgCount, errCount, 5, 66);
-        
+      
     }
     
     time_t endTestingTime = time(NULL);
     double testingTime = difftime(endTestingTime, startTestingTime);
-
+    double successRate = 100.0- (double)errCount/(double)(MNIST_MAX_TESTING_IMAGES)*100;
+    printf("\n successful-rate = %lf%%", successRate);
+	
     printf(" \n testing time is: %.1f sec \n\n", testingTime);
 
     // Close files
