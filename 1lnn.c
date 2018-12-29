@@ -179,8 +179,17 @@ void trainCell(Cell *c, MNIST_Image *img, int target){
  */
 
 void testCell(Cell *c, MNIST_Image *img, int target){
+    double c_output_test=0;
+    #pragma omp simd 
+    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
+        c->input[j] = img->pixel[j] ? 1 : 0;
+	if (c->input[j])
+        c_output_test += c->weight[j];
+    }
     
-    setCellInput(c, img);
-    calcCellOutput(c);
+    c->output = c_output_test/NUMBER_OF_INPUT_CELLS;   
+
+//    setCellInput(c, img);
+  //  calcCellOutput(c);
     
 }
