@@ -56,6 +56,7 @@ void trainLayer(Layer *l){
 
     int errCount = 0;
     int update_errorCount;
+    int update_max;
     // for test performance
     time_t startTrainingTime = time(NULL); 
     
@@ -99,7 +100,8 @@ void trainLayer(Layer *l){
 		if (l->cell[i].input[j])
         	l->cell[i].weight[j] += temp;
     	    }
-        
+            
+	    #pragma omp critical(update_max)
             if (l->cell[i].output > maxOut){
                 maxOut = l->cell[i].output;
                 maxInd = i;
@@ -178,10 +180,10 @@ void testLayer(Layer *l){
 		if (l->cell[i].input[j])
         	    c_output_test += l->cell[i].weight[j];
     	    }
-	    l->cell[i].output = c_output_test/NUMBER_OF_INPUT_CELLS;   
+	    c_output_test = c_output_test/NUMBER_OF_INPUT_CELLS;   
    
-            if (l->cell[i].output > maxOut){
-                maxOut = l->cell[i].output;
+            if (c_output_test > maxOut){
+                maxOut = c_output_test;
                 maxInd = i;
             }
     	}
