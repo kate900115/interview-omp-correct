@@ -37,7 +37,6 @@
 
 
 
-
 /**
  * @details Trains a layer by looping through and training its cells
  * @param l A pointer to the layer that is to be training
@@ -83,7 +82,7 @@ void trainLayer(Layer *l){
         for (int i=0; i < NUMBER_OF_OUTPUT_CELLS; i++){
 	     
     	    double c_output = 0;
-    	    #pragma simd 
+    	    //#pragma simd 
     	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
         	l->cell[i].input[j] = img.pixel[j] ? 1 : 0;
 		if (l->cell[i].input[j])
@@ -95,7 +94,7 @@ void trainLayer(Layer *l){
    	    double err = targetOutput.val[i] - l->cell[i].output;
     	    double temp = err * LEARNING_RATE;
     
-    	    #pragma simd
+    	    //#pragma simd
    	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
 		if (l->cell[i].input[j])
         	l->cell[i].weight[j] += temp;
@@ -169,7 +168,7 @@ void testLayer(Layer *l){
 	#pragma omp parallel for
         for (int i=0; i < NUMBER_OF_OUTPUT_CELLS; i++){
 	    double c_output_test=0;
-    	    #pragma simd 
+    	    //#pragma simd 
     	    for (int j=0; j<NUMBER_OF_INPUT_CELLS; j++){
        	    	l->cell[i].input[j] = img.pixel[j] ? 1 : 0;
 		if (l->cell[i].input[j])
